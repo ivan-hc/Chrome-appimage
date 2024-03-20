@@ -4,7 +4,7 @@
 APP=google-chrome
 mkdir tmp
 cd ./tmp
-wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-$(uname -m).AppImage -O appimagetool
+wget -q $(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | grep -v zsync | grep -i continuous | grep -i appimagetool | grep -i x86_64 | grep browser_download_url | cut -d '"' -f 4 | head -1) -O appimagetool
 chmod a+x ./appimagetool
 
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -27,7 +27,7 @@ export UNION_PRELOAD="${HERE}"
 exec "${HERE}"/$APP "$@"
 EOF
 chmod a+x ./$APP.AppDir/AppRun
-ARCH=x86_64 ./appimagetool -n ./$APP.AppDir
+ARCH=x86_64 VERSION=$(./appimagetool -v | grep -o '[[:digit:]]*') ./appimagetool -s ./$APP.AppDir
 cd ..
 mv ./tmp/*AppImage ./Google-Chrome-Stable-$VERSION-x86_64.AppImage
 
@@ -35,7 +35,7 @@ mv ./tmp/*AppImage ./Google-Chrome-Stable-$VERSION-x86_64.AppImage
 APP=google-chrome-beta
 mkdir tmp2
 cd ./tmp2
-wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-$(uname -m).AppImage -O appimagetool
+wget -q $(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | grep -v zsync | grep -i continuous | grep -i appimagetool | grep -i x86_64 | grep browser_download_url | cut -d '"' -f 4 | head -1) -O appimagetool
 chmod a+x ./appimagetool
 
 wget https://dl.google.com/linux/direct/google-chrome-beta_current_amd64.deb
@@ -58,7 +58,7 @@ export UNION_PRELOAD="${HERE}"
 exec "${HERE}"/$APP "$@"
 EOF
 chmod a+x ./$APP.AppDir/AppRun
-ARCH=x86_64 ./appimagetool -n ./$APP.AppDir
+ARCH=x86_64 VERSION=$(./appimagetool -v | grep -o '[[:digit:]]*') ./appimagetool -s ./$APP.AppDir
 cd ..
 mv ./tmp2/*AppImage ./Google-Chrome-Beta-$VERSION-x86_64.AppImage
 
@@ -66,7 +66,7 @@ mv ./tmp2/*AppImage ./Google-Chrome-Beta-$VERSION-x86_64.AppImage
 APP=google-chrome-unstable
 mkdir tmp3
 cd ./tmp3
-wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-$(uname -m).AppImage -O appimagetool
+wget -q $(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | grep -v zsync | grep -i continuous | grep -i appimagetool | grep -i x86_64 | grep browser_download_url | cut -d '"' -f 4 | head -1) -O appimagetool
 chmod a+x ./appimagetool
 
 wget https://dl.google.com/linux/direct/google-chrome-unstable_current_amd64.deb
@@ -89,6 +89,6 @@ export UNION_PRELOAD="${HERE}"
 exec "${HERE}"/$APP "$@"
 EOF
 chmod a+x ./$APP.AppDir/AppRun
-ARCH=x86_64 ./appimagetool -n ./$APP.AppDir
+ARCH=x86_64 VERSION=$(./appimagetool -v | grep -o '[[:digit:]]*') ./appimagetool -s ./$APP.AppDir
 cd ..
 mv ./tmp3/*AppImage ./Google-Chrome-Unstable-$VERSION-x86_64.AppImage
