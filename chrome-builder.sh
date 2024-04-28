@@ -4,7 +4,7 @@
 APP=google-chrome
 mkdir tmp
 cd ./tmp
-wget -q $(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | grep -v zsync | grep -i continuous | grep -i appimagetool | grep -i x86_64 | grep browser_download_url | cut -d '"' -f 4 | head -1) -O appimagetool
+wget -q "$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')" -O appimagetool
 chmod a+x ./appimagetool
 
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -35,7 +35,7 @@ mv ./tmp/*AppImage ./Google-Chrome-Stable-$VERSION-x86_64.AppImage
 APP=google-chrome-beta
 mkdir tmp2
 cd ./tmp2
-wget -q $(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | grep -v zsync | grep -i continuous | grep -i appimagetool | grep -i x86_64 | grep browser_download_url | cut -d '"' -f 4 | head -1) -O appimagetool
+wget -q "$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')" -O appimagetool
 chmod a+x ./appimagetool
 
 wget https://dl.google.com/linux/direct/google-chrome-beta_current_amd64.deb
@@ -66,7 +66,7 @@ mv ./tmp2/*AppImage ./Google-Chrome-Beta-$VERSION-x86_64.AppImage
 APP=google-chrome-unstable
 mkdir tmp3
 cd ./tmp3
-wget -q $(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | grep -v zsync | grep -i continuous | grep -i appimagetool | grep -i x86_64 | grep browser_download_url | cut -d '"' -f 4 | head -1) -O appimagetool
+wget -q "$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')" -O appimagetool
 chmod a+x ./appimagetool
 
 wget https://dl.google.com/linux/direct/google-chrome-unstable_current_amd64.deb
