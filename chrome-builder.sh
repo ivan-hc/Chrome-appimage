@@ -15,12 +15,10 @@ fi
 # CREATE CHROME BROWSER APPIMAGES
 
 _create_chrome_appimage(){
-	if ! test -f ./*.snap; then
-		if wget --version | head -1 | grep -q ' 1.'; then
-			wget -q --no-verbose --show-progress --progress=bar https://dl.google.com/linux/direct/"$APP"-"$CHANNEL"_current_amd64.deb
-		else
-			wget https://dl.google.com/linux/direct/"$APP"-"$CHANNEL"_current_amd64.deb
-		fi
+	if wget --version | head -1 | grep -q ' 1.'; then
+		wget -q --no-verbose --show-progress --progress=bar https://dl.google.com/linux/direct/"$APP"-"$CHANNEL"_current_amd64.deb
+	else
+		wget https://dl.google.com/linux/direct/"$APP"-"$CHANNEL"_current_amd64.deb
 	fi
 	ar x ./*.deb
 	tar xf ./data.tar.xz
