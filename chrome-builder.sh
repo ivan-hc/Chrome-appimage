@@ -1,94 +1,75 @@
 #!/bin/sh
 
-# ------------------------------------ STABLE
 APP=google-chrome
-mkdir tmp
-cd ./tmp
-wget -q "$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')" -O appimagetool
-chmod a+x ./appimagetool
 
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-ar x ./*.deb
-tar xf ./data.tar.xz
-mkdir $APP.AppDir
-mv ./opt/google/chrome/* ./$APP.AppDir/
-mv ./usr/share/applications/*.desktop ./$APP.AppDir/
-sed -i 's#Exec=/usr/bin/google-chrome-stable#Exec=google-chrome#g' ./$APP.AppDir/*.desktop
-cp ./$APP.AppDir/*128.png ./$APP.AppDir/$APP.png
+# TEMPORARY DIRECTORY
+mkdir -p tmp
+cd ./tmp || exit 1
 
-tar xf ./control.tar.xz
-VERSION=$(cat control | grep Version | cut -c 10-)
+# DOWNLOAD APPIMAGETOOL
+if ! test -f ./appimagetool; then
+	wget -q "$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')" -O appimagetool
+	chmod a+x ./appimagetool
+fi
 
-cat >> ./$APP.AppDir/AppRun << 'EOF'
-#!/bin/sh
-APP=google-chrome
-HERE="$(dirname "$(readlink -f "${0}")")"
-export UNION_PRELOAD="${HERE}"
-exec "${HERE}"/$APP "$@"
-EOF
-chmod a+x ./$APP.AppDir/AppRun
-ARCH=x86_64 VERSION=$(./appimagetool -v | grep -o '[[:digit:]]*') ./appimagetool -s ./$APP.AppDir
+# CREATE CHROME BROWSER APPIMAGES
+
+_create_chrome_appimage(){
+	if ! test -f ./*.snap; then
+		if wget --version | head -1 | grep -q ' 1.'; then
+			wget -q --no-verbose --show-progress --progress=bar https://dl.google.com/linux/direct/"$APP"-"$CHANNEL"_current_amd64.deb
+		else
+			wget https://dl.google.com/linux/direct/"$APP"-"$CHANNEL"_current_amd64.deb
+		fi
+	fi
+	ar x ./*.deb
+	tar xf ./data.tar.xz
+	mkdir "$APP".AppDir
+	mv ./opt/google/chrom*/* ./"$APP".AppDir/
+	mv ./usr/share/applications/*.desktop ./"$APP".AppDir/
+	sed -i "s#Exec=/usr/bin/google-chrome-$CHANNEL#Exec=google-chrome#g" ./"$APP".AppDir/*.desktop
+	if [ "$CHANNEL" = "stable" ]; then
+		cp ./"$APP".AppDir/*128.png ./"$APP".AppDir/"$APP".png
+	else
+		cp ./"$APP".AppDir/*128*png ./"$APP".AppDir/"$APP"-"$CHANNEL".png
+	fi
+	tar xf ./control.tar.xz
+	VERSION=$(cat control | grep Version | cut -c 10-)
+
+	cat <<-'HEREDOC' >> ./"$APP".AppDir/AppRun
+	#!/bin/sh
+	APP=CHROME
+	HERE="$(dirname "$(readlink -f "${0}")")"
+	export UNION_PRELOAD="${HERE}"
+	exec "${HERE}"/$APP "$@"
+	HEREDOC
+	chmod a+x ./"$APP".AppDir/AppRun
+	if [ "$CHANNEL" = "stable" ]; then
+		sed -i "s/CHROME/$APP/g" ./"$APP".AppDir/AppRun
+	else
+		sed -i "s/CHROME/$APP-$CHANNEL/g" ./"$APP".AppDir/AppRun
+	fi
+	ARCH=x86_64 VERSION=$(./appimagetool -v | grep -o '[[:digit:]]*') ./appimagetool -s ./"$APP".AppDir
+	mv ./*.AppImage ./Google-Chrome-"$CHANNEL"-"$VERSION"-x86_64.AppImage || exit 1
+}
+
+CHANNEL="stable"
+mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
+_create_chrome_appimage
 cd ..
-mv ./tmp/*AppImage ./Google-Chrome-Stable-$VERSION-x86_64.AppImage
+mv ./"$CHANNEL"/*.AppImage ./
 
-# ------------------------------------ BETA
-APP=google-chrome-beta
-mkdir tmp2
-cd ./tmp2
-wget -q "$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')" -O appimagetool
-chmod a+x ./appimagetool
-
-wget https://dl.google.com/linux/direct/google-chrome-beta_current_amd64.deb
-ar x ./*.deb
-tar xf ./data.tar.xz
-mkdir $APP.AppDir
-mv ./opt/google/chrome-beta/* ./$APP.AppDir/
-mv ./usr/share/applications/*.desktop ./$APP.AppDir/
-sed -i 's#Exec=/usr/bin/google-chrome-beta#Exec=google-chrome#g' ./$APP.AppDir/*.desktop
-cp ./$APP.AppDir/*128_beta.png ./$APP.AppDir/$APP.png
-
-tar xf ./control.tar.xz
-VERSION=$(cat control | grep Version | cut -c 10-)
-
-cat >> ./$APP.AppDir/AppRun << 'EOF'
-#!/bin/sh
-APP=google-chrome-beta
-HERE="$(dirname "$(readlink -f "${0}")")"
-export UNION_PRELOAD="${HERE}"
-exec "${HERE}"/$APP "$@"
-EOF
-chmod a+x ./$APP.AppDir/AppRun
-ARCH=x86_64 VERSION=$(./appimagetool -v | grep -o '[[:digit:]]*') ./appimagetool -s ./$APP.AppDir
+CHANNEL="beta"
+mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
+_create_chrome_appimage
 cd ..
-mv ./tmp2/*AppImage ./Google-Chrome-Beta-$VERSION-x86_64.AppImage
+mv ./"$CHANNEL"/*.AppImage ./
 
-# ------------------------------------ UNSTABLE
-APP=google-chrome-unstable
-mkdir tmp3
-cd ./tmp3
-wget -q "$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')" -O appimagetool
-chmod a+x ./appimagetool
-
-wget https://dl.google.com/linux/direct/google-chrome-unstable_current_amd64.deb
-ar x ./*.deb
-tar xf ./data.tar.xz
-mkdir $APP.AppDir
-mv ./opt/google/chrome-unstable/* ./$APP.AppDir/
-mv ./usr/share/applications/*.desktop ./$APP.AppDir/
-sed -i 's#Exec=/usr/bin/google-chrome-unstable#Exec=google-chrome#g' ./$APP.AppDir/*.desktop
-cp ./$APP.AppDir/*128_dev.png ./$APP.AppDir/$APP.png
-
-tar xf ./control.tar.xz
-VERSION=$(cat control | grep Version | cut -c 10-)
-
-cat >> ./$APP.AppDir/AppRun << 'EOF'
-#!/bin/sh
-APP=google-chrome-unstable
-HERE="$(dirname "$(readlink -f "${0}")")"
-export UNION_PRELOAD="${HERE}"
-exec "${HERE}"/$APP "$@"
-EOF
-chmod a+x ./$APP.AppDir/AppRun
-ARCH=x86_64 VERSION=$(./appimagetool -v | grep -o '[[:digit:]]*') ./appimagetool -s ./$APP.AppDir
+CHANNEL="unstable"
+mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
+_create_chrome_appimage
 cd ..
-mv ./tmp3/*AppImage ./Google-Chrome-Unstable-$VERSION-x86_64.AppImage
+mv ./"$CHANNEL"/*.AppImage ./
+
+cd ..
+mv ./tmp/*.AppImage ./
