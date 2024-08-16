@@ -8,7 +8,7 @@ cd ./tmp || exit 1
 
 # DOWNLOAD APPIMAGETOOL
 if ! test -f ./appimagetool; then
-	wget -q "$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')" -O appimagetool
+	wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
 	chmod a+x ./appimagetool
 fi
 
@@ -47,7 +47,7 @@ _create_chrome_appimage(){
 	else
 		sed -i "s/CHROME/$APP-$CHANNEL/g" ./"$APP".AppDir/AppRun
 	fi
-	ARCH=x86_64 VERSION=$(./appimagetool -v | grep -o '[[:digit:]]*') ./appimagetool -s ./"$APP".AppDir
+	ARCH=x86_64 ./appimagetool --comp zstd --mksquashfs-opt -Xcompression-level --mksquashfs-opt 20 ./"$APP".AppDir
 	mv ./*.AppImage ./Google-Chrome-"$CHANNEL"-"$VERSION"-x86_64.AppImage || exit 1
 }
 
