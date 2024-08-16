@@ -16,8 +16,7 @@ jobs:
 
     - name: build
       run: |
-        sudo apt update
-        sudo apt install libfuse2
+        sudo apt update && sudo apt install libfuse2 desktop-file-utils
         wget https://raw.githubusercontent.com/ivan-hc/Chrome-appimage/main/chrome-builder.sh
         chmod a+x ./chrome-builder.sh
         ./chrome-builder.sh
