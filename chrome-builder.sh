@@ -47,8 +47,9 @@ _create_chrome_appimage(){
 	else
 		sed -i "s/CHROME/$APP-$CHANNEL/g" ./"$APP".AppDir/AppRun
 	fi
-	ARCH=x86_64 ./appimagetool --comp zstd --mksquashfs-opt -Xcompression-level --mksquashfs-opt 20 ./"$APP".AppDir
-	mv ./*.AppImage ./Google-Chrome-"$CHANNEL"-"$VERSION"-x86_64.AppImage || exit 1
+	ARCH=x86_64 ./appimagetool --comp zstd --mksquashfs-opt -Xcompression-level --mksquashfs-opt 20 \
+	-u "gh-releases-zsync|$GITHUB_REPOSITORY_OWNER|Chrome-appimage|continuous|*x86_64.AppImage.zsync" \
+	./"$APP".AppDir Google-Chrome-"$CHANNEL"-"$VERSION"-x86_64.AppImage || exit 1
 }
 
 CHANNEL="stable"
