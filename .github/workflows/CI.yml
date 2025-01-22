@@ -16,12 +16,11 @@ jobs:
 
     - name: build
       run: |
-        sudo apt update && sudo apt install libfuse2 desktop-file-utils
-        wget https://raw.githubusercontent.com/ivan-hc/Chrome-appimage/main/chrome-builder.sh
+        sudo apt update && sudo apt install desktop-file-utils
         chmod a+x ./chrome-builder.sh
         ./chrome-builder.sh
         mkdir dist
-        mv *AppImage dist/
+        mv *AppImage* dist/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4.4.0
@@ -47,5 +46,5 @@ jobs:
             prerelease: false
             draft: false
             files: |
-              *.AppImage
+              *.AppImage*
             repo_token: ${{ secrets.GITHUB_TOKEN }}
