@@ -56,19 +56,19 @@ CHANNEL="stable"
 mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
 _create_chrome_appimage
 cd ..
-mv ./"$CHANNEL"/*.AppImage ./
+mv ./"$CHANNEL"/*.AppImage* ./
 
 CHANNEL="beta"
 mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
 _create_chrome_appimage
 cd ..
-mv ./"$CHANNEL"/*.AppImage ./
+mv ./"$CHANNEL"/*.AppImage* ./
 
 CHANNEL="unstable"
 mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
 _create_chrome_appimage
 cd ..
-mv ./"$CHANNEL"/*.AppImage ./
+mv ./"$CHANNEL"/*.AppImage* ./
 
 cd ..
-mv ./tmp/*.AppImage ./
+mv ./tmp/*.AppImage* ./
