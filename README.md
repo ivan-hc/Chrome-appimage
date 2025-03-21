@@ -1,7 +1,12 @@
 # Chrome-appimage
 Unofficial AppImages of Google Chrome Stable, Beta and Unstable.
 
-NOTE: This wrapper is not verified by, affiliated with, or supported by Google.
+--------------------------------------------------
+### NOTE: This wrapper is not verified by, affiliated with, or supported by Google.
+
+**The base software is under a proprietary license and unofficially repackaged as an AppImage for demonstration purposes, for the original authors, to promote this packaging format to them. Consider this package as "experimental". I also invite you to request the authors to release an official AppImage, and if they agree, you can show this repository as a proof of concept.**
+
+--------------------------------------------------
 
 ### Why AppImages?
 I chose this format because it takes up half the disk space of the deb archive when unpacked. Furthermore, AppImages have the particularity of being able to be isolated in a customized $HOME folder (just create one with the same name as the AppImage and with the ".home" extension), preventing the cursed dotfiles from dirtying the main $HOME folder.
