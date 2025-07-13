@@ -1,4 +1,4 @@
 https://github.com/ivan-hc/Chrome-appimage/releases/download/continuous/Google-Chrome-beta-139.0.7258.31-1-x86_64.AppImage
 https://github.com/ivan-hc/Chrome-appimage/releases/download/continuous/Google-Chrome-stable-138.0.7204.100-1-x86_64.AppImage
 https://github.com/ivan-hc/Chrome-appimage/releases/download/continuous/Google-Chrome-unstable-140.0.7259.2-1-x86_64.AppImage
-Sat Jul 12 01:55:34 UTC 2025
+Sun Jul 13 02:03:43 UTC 2025
