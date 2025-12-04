@@ -24,7 +24,7 @@ _create_chrome_appimage(){
 	tar xf ./data.tar.xz
 	mkdir "$APP".AppDir
 	mv ./opt/google/chrom*/* ./"$APP".AppDir/
-	mv ./usr/share/applications/*.desktop ./"$APP".AppDir/
+	mv ./usr/share/applications/g*.desktop ./"$APP".AppDir/
 	sed -i "s#Exec=/usr/bin/google-chrome-$CHANNEL#Exec=google-chrome#g" ./"$APP".AppDir/*.desktop
 	if [ "$CHANNEL" = "stable" ]; then
 		cp ./"$APP".AppDir/*128.png ./"$APP".AppDir/"$APP".png
