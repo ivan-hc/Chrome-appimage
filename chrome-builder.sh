@@ -8,8 +8,12 @@ cd ./tmp || exit 1
 
 # DOWNLOAD APPIMAGETOOL
 if ! test -f ./appimagetool; then
-	wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
+	wget -q https://github.com/pkgforge-dev/appimagetool/releases/latest/download/appimagetool-x86_64-linux -O appimagetool
 	chmod a+x ./appimagetool
+fi
+if ! test -f ./mkdwarfs; then
+	wget -q https://github.com/mhx/dwarfs/releases/download/v0.15.6/dwarfs-universal-0.15.6-Linux-x86_64 -O mkdwarfs
+	chmod a+x ./mkdwarfs
 fi
 
 # CREATE CHROME BROWSER APPIMAGES
@@ -28,8 +32,10 @@ _create_chrome_appimage(){
 	sed -i "s#Exec=/usr/bin/google-chrome-$CHANNEL#Exec=google-chrome#g" ./"$APP".AppDir/*.desktop
 	if [ "$CHANNEL" = "stable" ]; then
 		cp ./"$APP".AppDir/*128.png ./"$APP".AppDir/"$APP".png
+		cp ./"$APP".AppDir/"$APP".png ./"$APP".AppDir/.DirIcon
 	else
 		cp ./"$APP".AppDir/*128*png ./"$APP".AppDir/"$APP"-"$CHANNEL".png
+		cp ./"$APP".AppDir/"$APP"-"$CHANNEL".png ./"$APP".AppDir/.DirIcon
 	fi
 	tar xf ./control.tar.xz
 	VERSION=$(cat control | grep Version | cut -c 10-)
@@ -47,25 +53,26 @@ _create_chrome_appimage(){
 	else
 		sed -i "s/CHROME/$APP-$CHANNEL/g" ./"$APP".AppDir/AppRun
 	fi
-	ARCH=x86_64 ./appimagetool --comp zstd --mksquashfs-opt -Xcompression-level --mksquashfs-opt 20 \
+	VERSION="$VERSION" ./appimagetool --appimage-arch x86_64 --mkdwarfs ./mkdwarfs \
 	-u "gh-releases-zsync|$GITHUB_REPOSITORY_OWNER|Chrome-appimage|continuous|*-$CHANNEL-*x86_64.AppImage.zsync" \
-	./"$APP".AppDir Google-Chrome-"$CHANNEL"-"$VERSION"-x86_64.AppImage || exit 1
+	-n Google-Chrome-"$CHANNEL"-"$VERSION"-x86_64.AppImage \
+	./"$APP".AppDir || exit 1
 }
 
 CHANNEL="stable"
-mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
+mkdir -p "$CHANNEL" && cp ./appimagetool ./mkdwarfs ./"$CHANNEL"/ && cd "$CHANNEL" || exit 1
 _create_chrome_appimage
 cd ..
 mv ./"$CHANNEL"/*.AppImage* ./
 
 CHANNEL="beta"
-mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
+mkdir -p "$CHANNEL" && cp ./appimagetool ./mkdwarfs ./"$CHANNEL"/ && cd "$CHANNEL" || exit 1
 _create_chrome_appimage
 cd ..
 mv ./"$CHANNEL"/*.AppImage* ./
 
 CHANNEL="unstable"
-mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
+mkdir -p "$CHANNEL" && cp ./appimagetool ./mkdwarfs ./"$CHANNEL"/ && cd "$CHANNEL" || exit 1
 _create_chrome_appimage
 cd ..
 mv ./"$CHANNEL"/*.AppImage* ./
