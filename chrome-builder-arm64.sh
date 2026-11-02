@@ -11,6 +11,8 @@ if ! test -f ./appimagetool; then
 	wget -q https://github.com/pkgforge-dev/appimagetool/releases/latest/download/appimagetool-x86_64-linux -O appimagetool
 	chmod a+x ./appimagetool
 fi
+
+# Pre-fetch host mkdwarfs because cross-packaging for aarch64 on x86_64 would otherwise fetch a foreign binary.
 if ! test -f ./mkdwarfs; then
 	wget -q https://github.com/mhx/dwarfs/releases/download/v0.15.6/dwarfs-universal-0.15.6-Linux-x86_64 -O mkdwarfs
 	chmod a+x ./mkdwarfs
@@ -53,7 +55,7 @@ _create_chrome_appimage(){
 	else
 		sed -i "s/CHROME/$APP-$CHANNEL/g" ./"$APP".AppDir/AppRun
 	fi
-	VERSION="$VERSION" ./appimagetool --appimage-arch aarch64 --mkdwarfs ./mkdwarfs \
+	APPIMAGE_ARCH=aarch64 VERSION="$VERSION" ./appimagetool --mkdwarfs ./mkdwarfs \
 	-u "gh-releases-zsync|$GITHUB_REPOSITORY_OWNER|Chrome-appimage|continuous|*-$CHANNEL-*aarch64.AppImage.zsync" \
 	-n Google-Chrome-"$CHANNEL"-"$VERSION"-aarch64.AppImage \
 	./"$APP".AppDir || exit 1

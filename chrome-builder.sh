@@ -11,10 +11,6 @@ if ! test -f ./appimagetool; then
 	wget -q https://github.com/pkgforge-dev/appimagetool/releases/latest/download/appimagetool-x86_64-linux -O appimagetool
 	chmod a+x ./appimagetool
 fi
-if ! test -f ./mkdwarfs; then
-	wget -q https://github.com/mhx/dwarfs/releases/download/v0.15.6/dwarfs-universal-0.15.6-Linux-x86_64 -O mkdwarfs
-	chmod a+x ./mkdwarfs
-fi
 
 # CREATE CHROME BROWSER APPIMAGES
 
@@ -53,26 +49,26 @@ _create_chrome_appimage(){
 	else
 		sed -i "s/CHROME/$APP-$CHANNEL/g" ./"$APP".AppDir/AppRun
 	fi
-	VERSION="$VERSION" ./appimagetool --appimage-arch x86_64 --mkdwarfs ./mkdwarfs \
+	APPIMAGE_ARCH=x86_64 VERSION="$VERSION" ./appimagetool \
 	-u "gh-releases-zsync|$GITHUB_REPOSITORY_OWNER|Chrome-appimage|continuous|*-$CHANNEL-*x86_64.AppImage.zsync" \
 	-n Google-Chrome-"$CHANNEL"-"$VERSION"-x86_64.AppImage \
 	./"$APP".AppDir || exit 1
 }
 
 CHANNEL="stable"
-mkdir -p "$CHANNEL" && cp ./appimagetool ./mkdwarfs ./"$CHANNEL"/ && cd "$CHANNEL" || exit 1
+mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
 _create_chrome_appimage
 cd ..
 mv ./"$CHANNEL"/*.AppImage* ./
 
 CHANNEL="beta"
-mkdir -p "$CHANNEL" && cp ./appimagetool ./mkdwarfs ./"$CHANNEL"/ && cd "$CHANNEL" || exit 1
+mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
 _create_chrome_appimage
 cd ..
 mv ./"$CHANNEL"/*.AppImage* ./
 
 CHANNEL="unstable"
-mkdir -p "$CHANNEL" && cp ./appimagetool ./mkdwarfs ./"$CHANNEL"/ && cd "$CHANNEL" || exit 1
+mkdir -p "$CHANNEL" && cp ./appimagetool ./"$CHANNEL"/appimagetool && cd "$CHANNEL" || exit 1
 _create_chrome_appimage
 cd ..
 mv ./"$CHANNEL"/*.AppImage* ./
